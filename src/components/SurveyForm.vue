@@ -112,7 +112,7 @@ const handleSubmit = () => {
     </Card>
 
     <!-- Main Form Content -->
-    <Tabs :model-value="currentSection" @update:model-value="currentSection = $event">
+    <Tabs :model-value="currentSection" @update:model-value="currentSection = String($event)">
       <!-- Section Navigation Tabs -->
       <Card class="mb-6">
         <CardContent class="pt-6">

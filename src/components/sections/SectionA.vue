@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import type { Ref } from 'vue'
 import type { DateValue } from '@internationalized/date'
-import { CalendarDate, fromDate, getLocalTimeZone } from '@internationalized/date'
+import { fromDate, getLocalTimeZone } from '@internationalized/date'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
