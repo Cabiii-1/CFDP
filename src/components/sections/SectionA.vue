@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import type { Ref } from 'vue'
+import type { DateValue } from '@internationalized/date'
+import { CalendarDate, fromDate, getLocalTimeZone } from '@internationalized/date'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Calendar } from '@/components/ui/calendar'
+import { Button } from '@/components/ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { CalendarIcon } from 'lucide-vue-next'
 
 interface UserData {
   enumeratorName: string
@@ -27,6 +34,19 @@ const formData = ref({
   enumeratorName: props.userData.enumeratorName,
   dateOfInterview: new Date().toISOString().split('T')[0]
 })
+
+const selectedDate = ref(fromDate(new Date(), getLocalTimeZone())) as Ref<DateValue>
+
+// Watch for date changes and update formData
+watch(selectedDate, (newDate) => {
+  if (newDate) {
+    // Convert DateValue to ISO string format (YYYY-MM-DD)
+    const year = newDate.year
+    const month = String(newDate.month).padStart(2, '0')
+    const day = String(newDate.day).padStart(2, '0')
+    formData.value.dateOfInterview = `${year}-${month}-${day}`
+  }
+}, { immediate: true })
 
 watch(formData, (newData) => {
   emits('update', newData)
@@ -129,12 +149,28 @@ const municipalities = [
       <!-- Date of Interview -->
       <div class="grid gap-3">
         <Label for="date-interview">Date of Interview *</Label>
-        <Input
-          id="date-interview"
-          v-model="formData.dateOfInterview"
-          type="date"
-          required
-        />
+        <Popover>
+          <PopoverTrigger as-child>
+            <Button
+              variant="outline"
+              class="w-full justify-start text-left font-normal"
+              :class="!selectedDate && 'text-muted-foreground'"
+            >
+              <CalendarIcon class="mr-2 h-4 w-4" />
+              {{
+                selectedDate
+                  ? `${selectedDate.month}/${selectedDate.day}/${selectedDate.year}`
+                  : 'Select interview date'
+              }}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent class="w-auto p-0" align="start">
+            <Calendar
+              v-model="selectedDate"
+              initial-focus
+            />
+          </PopoverContent>
+        </Popover>
       </div>
     </CardContent>
   </Card>
